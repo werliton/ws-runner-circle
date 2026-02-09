@@ -14,3 +14,4 @@ export const defaultTheme = {
   'green-300': '#90ff81',
   'green-500': '#56ff02',
 }
+export type DefaultTheme = typeof defaultTheme;

@@ -1,9 +1,9 @@
-import { Box, Typography } from "@mui/material";
+import { Alert, Box } from "@mui/material";
 
 export const ErrorMessage = ({ message }: { message: string }) => {
   return (
     <Box display="flex" justifyContent="center" mt={2}>
-      <Typography color="error">Erro ao buscar dados: {message}</Typography>
+      <Alert severity="error">Erro ao buscar dados: {message}</Alert>
     </Box>
   );
 };

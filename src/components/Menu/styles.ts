@@ -2,6 +2,7 @@
 import { Box, Container, TextField, Card } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+import { DefaultTheme } from "../../styles/themes/default";
 
 export const Layout = styled(Box)`
   display: flex;
@@ -48,31 +49,30 @@ export const CriarRegistro = styled.div`
   margin-top: 50px;
 `;
 
-
 export const StyledNavLink = styled(NavLink)`
   display: flex;
   flex-direction: row-reverse;
   justify-content: center;
   align-items: center;
   text-decoration: none;
-  gap: 8px; 
-  color: ${(props) => props.theme["gray-600"]};
+  gap: 8px;
+  color: ${(props) => props.theme["white"]};
   cursor: pointer;
 
-  &&:hover{
+  &&:hover {
     color: ${(props) => props.theme["gray-500"]};
   }
 `;
 
 export const SideNavLinksPublicar = styled.span`
   color: ${(props) => props.theme["gray-900"]};
-  font-size:1.5rem;
-`
+  font-size: 1.5rem;
+`;
 export const SideNavLinksLogout = styled.span`
-  font-size:1.5rem;
+  font-size: 1.5rem;
   color: ${(props) => props.theme["gray-600"]};
 
-  &&:hover{
+  &&:hover {
     color: ${(props) => props.theme["gray-500"]};
   }
-`
+`;

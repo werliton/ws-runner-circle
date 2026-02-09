@@ -1,11 +1,11 @@
-import { Box, Typography } from "@mui/material";
+import { Alert, Box } from "@mui/material";
 
 export const NoData = ({ message }: { message: string }) => {
   return (
-    <Box display="flex" justifyContent="center" mt={2}>
-      <Typography>
+    <Box display="flex" mt={2}>
+      <Alert severity="warning">
         Nenhuma atividade encontrada para o tipo "{message}".
-      </Typography>
+      </Alert>
     </Box>
   );
 };
