@@ -20,7 +20,7 @@ const GET_ACTIVITIES = gql`
 
 const GET_ACTIVITY_BY_TYPE = gql`
   query GetActivityByType($type: String!) {
-    activitiesByType(typed: $type) {
+    activitiesByType(type: $type) {
       id
       time
       type

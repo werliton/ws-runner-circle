@@ -6,52 +6,26 @@ import {
   GET_ACTIVITIES,
   GET_ACTIVITY_BY_TYPE,
 } from "../../services/graphql/queries/activities.graphql";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import Loading from "../../components/Loading";
 import { NoData } from "../../components/NoData";
 
 export function FeedGeral() {
   const [input, setInput] = useState("");
-  const [activities, setActivities] = useState<any[]>([]);
   const { loading, error, data } = useQuery(
     input.length === 0 ? GET_ACTIVITIES : GET_ACTIVITY_BY_TYPE,
     {
       variables: input.length > 0 ? { type: input } : {},
-      // skip: !input, // Evita refetch se já temos atividades carregadas
     },
   );
 
-  // useEffect(() => {
-  //   if (activities.length > 0) {
-  //     if (input.length === 0) {
-  //       setActivities(data.activities);
-  //       return;
-  //     }
-
-  //     const filtered = activities.filter((item) => item.type.includes(input));
-  //     if (filtered.length > 0) {
-  //       setActivities(filtered);
-  //     } else {
-  //       setActivities([]);
-  //     }
-  //   }
-  // }, [input, activities]);
-
-  useEffect(() => {
-    if (data?.activities) {
-      setActivities(data.activities);
-    }
-    if (data?.activitiesByType) {
-      setActivities(data.activitiesByType);
-    }
-  }, [data]);
+  const activities = data?.activities || data?.activitiesByType || [];
 
   const handleInput = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const { value } = e.target;
-    setInput(value);
+    setInput(e.target.value);
   };
 
   return (
