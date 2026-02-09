@@ -81,6 +81,7 @@ export const typeDefs = `#graphql
     activities: [Activity]
     activity(id: ID!): Activity
     activitiesByType(type: String!): [Activity]
+    activitiesByUser(user: String!): [Activity]
   }
 
   type Mutation {

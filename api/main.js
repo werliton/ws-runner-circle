@@ -12,8 +12,10 @@ const resolvers = {
       activities.find((activity) => activity.id === parseInt(id)),
     activitiesByType: (_, { type }) =>
       activities.filter((activity) =>
-        activity.type.toLocaleLowerCase().includes(type.toLocaleLowerCase()),
+        activity.type.toLowerCase().includes(type.toLowerCase()),
       ),
+    activitiesByUser: (_, user) =>
+      activities.filter((activity) => activity.user === user),
   },
 };
 

@@ -36,4 +36,22 @@ const GET_ACTIVITY_BY_TYPE = gql`
   }
 `;
 
-export { GET_ACTIVITIES, GET_ACTIVITY_BY_TYPE };
+const GET_ACTIVITY_BY_USER = gql`
+  query GetActivityByUser($user: String!) {
+    activitiesByUser(user: $user) {
+      id
+      time
+      type
+      distance
+      calories
+      bpm
+      user
+      userImage
+      likes
+      comments
+      imageUrl
+    }
+  }
+`;
+
+export { GET_ACTIVITIES, GET_ACTIVITY_BY_TYPE, GET_ACTIVITY_BY_USER };

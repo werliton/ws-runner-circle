@@ -1,31 +1,65 @@
-import { Box, CssBaseline, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  CssBaseline,
+  Grid,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
 import { SearchField, FeedContainer } from "./styles";
 import { ActivityCard } from "../../components/ActivityCard";
 import { useQuery } from "@apollo/client";
 import {
   GET_ACTIVITIES,
   GET_ACTIVITY_BY_TYPE,
+  GET_ACTIVITY_BY_USER,
 } from "../../services/graphql/queries/activities.graphql";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import Loading from "../../components/Loading";
 import { NoData } from "../../components/NoData";
+import { SelectField } from "../../components/Select";
 
 export function FeedGeral() {
-  const [input, setInput] = useState("");
+  const [userInput, setUserInput] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+
   const { loading, error, data } = useQuery(
-    input.length === 0 ? GET_ACTIVITIES : GET_ACTIVITY_BY_TYPE,
+    userInput.length === 0
+      ? selectedType.length === 0
+        ? GET_ACTIVITIES
+        : GET_ACTIVITY_BY_TYPE
+      : GET_ACTIVITY_BY_USER,
     {
-      variables: input.length > 0 ? { type: input } : {},
+      variables:
+        userInput.length > 0
+          ? { user: userInput }
+          : selectedType.length > 0
+            ? { type: selectedType }
+            : {},
     },
   );
 
   const activities = data?.activities || data?.activitiesByType || [];
+  const categories = useMemo(() => {
+    return activities.reduce((acc: any[], item: { type: string }) => {
+      if (!acc.some((category) => category.value === item.type)) {
+        acc.push({
+          label: item.type,
+          value: item.type,
+        });
+      }
+      return acc;
+    }, []);
+  }, []);
 
   const handleInput = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setInput(e.target.value);
+    setUserInput(e.target.value);
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent) => {
+    setSelectedType(e.target.value);
   };
 
   return (
@@ -37,11 +71,21 @@ export function FeedGeral() {
         variant="outlined"
         onChange={handleInput}
       />
+
+      <Box mt={2}>
+        <SelectField
+          name="Tipo de atividade"
+          value={selectedType}
+          options={[{ label: "Todas", value: "" }, ...categories]}
+          handleChange={handleSelectChange}
+        />
+      </Box>
+
       <ContentManager
         loading={loading}
         error={error}
         activities={activities}
-        input={input}
+        input={userInput}
       />
     </Box>
   );
