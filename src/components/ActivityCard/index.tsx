@@ -35,9 +35,7 @@ export function ActivityCard({ activity }: { activity: Activity }) {
       <ActivityImage src={activity.imageUrl} alt="Activity" />
       <CardContent>
         <ActivityDescription>
-          <Typography variant="subtitle1" gutterBottom>
-            {activity.type}
-          </Typography>
+          <Typography variant="subtitle1">{activity.type}</Typography>
         </ActivityDescription>
         <InfoBox>
           <InfoItem>
