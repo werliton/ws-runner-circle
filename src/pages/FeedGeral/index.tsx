@@ -12,6 +12,7 @@ import {
   GET_ACTIVITIES,
   GET_ACTIVITY_BY_TYPE,
   GET_ACTIVITY_BY_USER,
+  GET_ALL_CATEGORIES,
 } from "../../services/graphql/queries/activities.graphql";
 import { useMemo, useState } from "react";
 import { ErrorMessage } from "../../components/ErrorMessage";
@@ -23,34 +24,40 @@ export function FeedGeral() {
   const [userInput, setUserInput] = useState("");
   const [selectedType, setSelectedType] = useState("");
 
-  const { loading, error, data } = useQuery(
-    userInput.length === 0
-      ? selectedType.length === 0
-        ? GET_ACTIVITIES
-        : GET_ACTIVITY_BY_TYPE
-      : GET_ACTIVITY_BY_USER,
-    {
-      variables:
-        userInput.length > 0
-          ? { user: userInput }
-          : selectedType.length > 0
-            ? { type: selectedType }
-            : {},
-    },
-  );
+  const getQuery = () => {
+    if (userInput.length > 0) return GET_ACTIVITY_BY_USER;
+    if (selectedType.length > 0) return GET_ACTIVITY_BY_TYPE;
+    return GET_ACTIVITIES;
+  };
+
+  const getVariables = () => {
+    if (userInput.length > 0) return { user: userInput };
+    if (selectedType.length > 0) return { type: selectedType };
+    return {};
+  };
+
+  const { loading, error, data } = useQuery(getQuery(), {
+    variables: getVariables(),
+  });
+
+  const { data: categoriesData } = useQuery(GET_ALL_CATEGORIES);
 
   const activities = data?.activities || data?.activitiesByType || [];
+
   const categories = useMemo(() => {
-    return activities.reduce((acc: any[], item: { type: string }) => {
-      if (!acc.some((category) => category.value === item.type)) {
-        acc.push({
-          label: item.type,
-          value: item.type,
-        });
-      }
-      return acc;
-    }, []);
-  }, []);
+    return categoriesData?.activities?.reduce(
+      (
+        acc: Array<{ label: string; value: string }>,
+        item: { type: string },
+      ) => {
+        if (!acc.some((category) => category.value === item.type)) {
+          acc.push({ label: item.type, value: item.type });
+        }
+        return acc;
+      },
+      [],
+    );
+  }, [categoriesData?.activities]);
 
   const handleInput = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

@@ -54,4 +54,17 @@ const GET_ACTIVITY_BY_USER = gql`
   }
 `;
 
-export { GET_ACTIVITIES, GET_ACTIVITY_BY_TYPE, GET_ACTIVITY_BY_USER };
+const GET_ALL_CATEGORIES = gql`
+  query GetAllCategories {
+    activities {
+      type
+    }
+  }
+`;
+
+export {
+  GET_ACTIVITIES,
+  GET_ACTIVITY_BY_TYPE,
+  GET_ACTIVITY_BY_USER,
+  GET_ALL_CATEGORIES,
+};
