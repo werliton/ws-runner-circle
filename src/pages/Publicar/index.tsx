@@ -6,6 +6,8 @@ import { CREATE_ACTIVITY } from "../../services/graphql/mutations/activities.gra
 import { ErrorMessage } from "../../components/ErrorMessage";
 import { Activity } from "../../components/ActivityCard";
 import { useNavigate } from "react-router-dom";
+import { GET_ACTIVITIES } from "../../services/graphql/queries/activities.graphql";
+import { gql } from "@apollo/client";
 
 export function Publicar() {
   const navigate = useNavigate();
@@ -22,7 +24,51 @@ export function Publicar() {
     type: "",
     user: "Letox",
   });
-  const [addActivity, { loading, error = "" }] = useMutation(CREATE_ACTIVITY);
+  const [addActivity, { loading, error = "" }] = useMutation(CREATE_ACTIVITY, {
+    update: (cache, { data: { addActivity } }) => {
+      const existingPosts = cache.readQuery({ query: GET_ACTIVITIES });
+      if (existingPosts) {
+        cache.writeQuery({
+          query: GET_ACTIVITIES,
+          data: { activities: [...existingPosts.activities, addActivity] },
+        });
+      }
+      // Atualiza o cache para refletir a adição do novo post
+      cache.modify({
+        fields: {
+          activities(existingActivitiesRefs = [], { readField }) {
+            const newActivityRef = cache.writeFragment({
+              data: addActivity,
+              fragment: gql`
+                fragment NewActivity on Activity {
+                  id
+                  imageUrl
+                  userImage
+                  distance
+                  calories
+                  bpm
+                  comments
+                  likes
+                  time
+                  type
+                }
+              `,
+            });
+            if (
+              existingActivitiesRefs.some(
+                (ref) => readField("id", ref) === addActivity.id,
+              )
+            ) {
+              return existingActivitiesRefs;
+            }
+            return [...existingActivitiesRefs, newActivityRef];
+          },
+        },
+      });
+      cache.evict({ fieldName: "activities" });
+      cache.gc();
+    },
+  });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
