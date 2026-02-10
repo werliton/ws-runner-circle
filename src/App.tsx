@@ -3,7 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { GlobalStyle } from "./styles/global";
 import { Router } from "./Router";
 import { defaultTheme } from "./styles/themes/default";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 import client from "./apolloClient";
 
 function App() {

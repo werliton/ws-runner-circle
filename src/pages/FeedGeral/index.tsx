@@ -6,15 +6,15 @@ import {
   Typography,
 } from "@mui/material";
 import { SearchField, FeedContainer } from "./styles";
-import { ActivityCard } from "../../components/ActivityCard";
-import { useQuery } from "@apollo/client";
+import { Activity, ActivityCard } from "../../components/ActivityCard";
+import { useQuery } from "@apollo/client/react";
 import {
   GET_ACTIVITIES,
   GET_ACTIVITY_BY_TYPE,
   GET_ACTIVITY_BY_USER,
   GET_ALL_CATEGORIES,
 } from "../../services/graphql/queries/activities.graphql";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import Loading from "../../components/Loading";
 import { NoData } from "../../components/NoData";
@@ -23,6 +23,7 @@ import { SelectField } from "../../components/Select";
 export function FeedGeral() {
   const [userInput, setUserInput] = useState("");
   const [selectedType, setSelectedType] = useState("");
+  const [activities, setActivities] = useState<Activity[]>([]);
 
   const getQuery = () => {
     if (userInput.length > 0) return GET_ACTIVITY_BY_USER;
@@ -36,28 +37,41 @@ export function FeedGeral() {
     return {};
   };
 
-  const { loading, error, data } = useQuery(getQuery(), {
+  const { loading, error, data } = useQuery<{
+    activities: Activity[];
+    activitiesByType: Activity[];
+    activitiesByUser: Activity[];
+  }>(getQuery(), {
     variables: getVariables(),
   });
 
-  const { data: categoriesData } = useQuery(GET_ALL_CATEGORIES);
+  const { data: categoriesData } = useQuery<{ activities: Activity[] }>(
+    GET_ALL_CATEGORIES,
+  );
 
-  const activities = data?.activities || data?.activitiesByType || [];
+  useEffect(() => {
+    if (data) {
+      const fetchedActivities =
+        data.activities || data.activitiesByType || data.activitiesByUser || [];
+      setActivities(fetchedActivities);
+    }
+  }, [data]);
 
-  const categories = useMemo(() => {
-    return categoriesData?.activities?.reduce(
-      (
-        acc: Array<{ label: string; value: string }>,
-        item: { type: string },
-      ) => {
-        if (!acc.some((category) => category.value === item.type)) {
-          acc.push({ label: item.type, value: item.type });
-        }
-        return acc;
-      },
-      [],
-    );
-  }, [categoriesData?.activities]);
+  const categories =
+    useMemo(() => {
+      return categoriesData?.activities?.reduce(
+        (
+          acc: Array<{ label: string; value: string }>,
+          item: { type: string },
+        ) => {
+          if (!acc.some((category) => category.value === item.type)) {
+            acc.push({ label: item.type, value: item.type });
+          }
+          return acc;
+        },
+        [],
+      );
+    }, [categoriesData?.activities]) || [];
 
   const handleInput = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

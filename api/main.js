@@ -14,9 +14,46 @@ const resolvers = {
       activities.filter((activity) =>
         activity.type.toLowerCase().includes(type.toLowerCase()),
       ),
-    activitiesByUser: (_, user) =>
+    activitiesByUser: (_, { user }) =>
       activities.filter((activity) => activity.user === user),
   },
+  Mutation: {
+    addActivity: (_, { input }) => {
+      const newActivity = {
+        id: activities.length + 1,
+        time: input.time,
+        type: input.type,
+        distance: input.distance,
+        calories: input.calories,
+        bpm: input.bpm,
+        user: input.user,
+        userImage: input.userImage,
+        likes: input.likes,
+        comments: input.comments,
+        imageUrl: input.imageUrl,
+      };
+      activities.push(newActivity);
+      return newActivity;
+    },
+    addUser: (_, { username, email, image }) => {
+      const newUser = {
+        id: users.length + 1,
+        username,
+        email,
+        image,
+      };
+      users.push(newUser);
+      return newUser;
+    },
+  },
+  // Subscription: {
+  //   userAdded: {
+  //     subscribe: () => pubsub.asyncIterator(["USER_ADDED"]),
+  //   },
+  //   activityAdded: {
+  //     subscribe: () => pubsub.asyncIterator(["ACTIVITY_ADDED"]),
+  //   },
+  // },
 };
 
 const server = new ApolloServer({

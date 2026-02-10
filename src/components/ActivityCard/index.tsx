@@ -32,7 +32,7 @@ export interface Activity {
 export function ActivityCard({ activity }: { activity: Activity }) {
   return (
     <ActivityCardContainer>
-      <ActivityImage src={activity.imageUrl} alt="Activity" />
+      <ActivityImage src={activity.imageUrl} alt="Activity" loading="lazy" />
       <CardContent>
         <ActivityDescription>
           <Typography variant="subtitle1">{activity.type}</Typography>

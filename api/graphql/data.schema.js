@@ -39,7 +39,7 @@ export const activities = [
   {
     id: 3,
     time: "08:00",
-    type: "Nataçãoß",
+    type: "Natação",
     distance: "10",
     calories: "500",
     bpm: "110",
@@ -49,7 +49,7 @@ export const activities = [
     likes: 20,
     comments: 10,
     imageUrl:
-      "https://images.unsplash.com/photo-1480264104733-84fb0b925be3?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.pexels.com/photos/1263349/pexels-photo-1263349.jpeg",
   },
 ];
 
@@ -61,7 +61,7 @@ export const typeDefs = `#graphql
     email: String!
   }
 
-  type Activity {
+type Activity {
     id: ID!
     time: String!
     type: String!
@@ -84,19 +84,23 @@ export const typeDefs = `#graphql
     activitiesByUser(user: String!): [Activity]
   }
 
+  input ActivityInput {
+    time: String!
+    type: String!
+    distance: String!
+    calories: String!
+    bpm: String!
+    user: String!
+    userImage: String!
+    likes: Int!
+    comments: Int!
+    imageUrl: String!
+  }
+
   type Mutation {
     addUser(username: String!, email: String!): User
     addActivity(
-      time: String!
-      type: String!
-      distance: String!
-      calories: String!
-      bpm: String!
-      user: String!
-      userImage: String!
-      likes: Int!
-      comments: Int!
-      imageUrl: String!
+      input: ActivityInput!
     ): Activity
   }
 
